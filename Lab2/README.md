@@ -39,19 +39,22 @@
 Lab2/
 ├── Lab2.csproj                    # Основной проект
 ├── Program.cs                     # Точка входа приложения
-├── CollectionBenchmarkRunner.cs   # Класс для запуска всех бенчмарков
-├── PerformanceResults.cs          # Класс для хранения и вывода результатов
-├── ListBenchmark.cs               # Бенчмарки для List<T>
-├── LinkedListBenchmark.cs         # Бенчмарки для LinkedList<T>
-├── QueueBenchmark.cs              # Бенчмарки для Queue<T>
-├── StackBenchmark.cs              # Бенчмарки для Stack<T>
-├── ImmutableListBenchmark.cs      # Бенчмарки для ImmutableList<T>
-├── ListTests.cs                   # Тесты для List<T>
-├── LinkedListTests.cs             # Тесты для LinkedList<T>
-├── QueueTests.cs                  # Тесты для Queue<T>
-├── StackTests.cs                  # Тесты для Stack<T>
-├── ImmutableListTests.cs          # Тесты для ImmutableList<T>
-└── README.md                      # Описание
+├── README.md                      # Описание
+├── Core/                          # Основные классы
+│   ├── CollectionBenchmarkRunner.cs   # Класс для запуска всех бенчмарков
+│   └── PerformanceResults.cs          # Класс для хранения и вывода результатов
+├── Benchmarks/                    # Бенчмарки производительности
+│   ├── ListBenchmark.cs               # Бенчмарки для List<T>
+│   ├── LinkedListBenchmark.cs         # Бенчмарки для LinkedList<T>
+│   ├── QueueBenchmark.cs              # Бенчмарки для Queue<T>
+│   ├── StackBenchmark.cs              # Бенчмарки для Stack<T>
+│   └── ImmutableListBenchmark.cs      # Бенчмарки для ImmutableList<T>
+└── Tests/                         # Автоматизированные тесты
+    ├── ListTests.cs                   # Тесты для List<T>
+    ├── LinkedListTests.cs             # Тесты для LinkedList<T>
+    ├── QueueTests.cs                  # Тесты для Queue<T>
+    ├── StackTests.cs                  # Тесты для Stack<T>
+    └── ImmutableListTests.cs          # Тесты для ImmutableList<T>
 ```
 
 ## Инструкция по запуску
@@ -127,9 +130,9 @@ Lab2/
 ### Пример вывода программы:
 
 ```
-=== Анализ производительности коллекций ===
+Анализ производительности коллекций
 
-Тестирование List<int>...
+Тестирование List<int>
 Результаты для List<int>:
   Добавление в конец:     0,384 мс
   Добавление в начало:    0,008 мс

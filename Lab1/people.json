@@ -1,0 +1,35 @@
+﻿[
+  {
+    "FirstName": "Сергей",
+    "LastName": "Григорьев-Апполонов",
+    "Age": 38,
+    "personId": "2",
+    "Email": "greyw@france.com",
+    "phone": "555",
+    "FullName": "Сергей Григорьев-Апполонов",
+    "IsAdult": true,
+    "_birthDate": "0001-01-01T00:00:00"
+  },
+  {
+    "FirstName": "Филипп",
+    "LastName": "Киркоров",
+    "Age": 58,
+    "personId": "3",
+    "Email": "filipp@kirkorov.bg",
+    "phone": "111",
+    "FullName": "Филипп Киркоров",
+    "IsAdult": true,
+    "_birthDate": "0001-01-01T00:00:00"
+  },
+  {
+    "FirstName": "Лариса",
+    "LastName": "Долина",
+    "Age": 70,
+    "personId": "4",
+    "Email": "zaberu@kvartiry.ru",
+    "phone": "666",
+    "FullName": "Лариса Долина",
+    "IsAdult": true,
+    "_birthDate": "0001-01-01T00:00:00"
+  }
+]

@@ -1,0 +1,125 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}{{ customer.get_full_name }} - CRM{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">{{ customer.get_full_name }}</h1>
+        <div>
+            <a href="{% url 'customer_edit' customer.pk %}" class="btn btn-primary">
+                <i class="bi bi-pencil me-2"></i>Редактировать
+            </a>
+            <a href="{% url 'customer_list' %}" class="btn btn-secondary">Назад</a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">Информация</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="mb-0">
+                        <dt>Имя</dt>
+                        <dd>{{ customer.first_name }}</dd>
+                        
+                        {% if customer.last_name %}
+                        <dt>Фамилия</dt>
+                        <dd>{{ customer.last_name }}</dd>
+                        {% endif %}
+                        
+                        {% if customer.email %}
+                        <dt>Email</dt>
+                        <dd>{{ customer.email }}</dd>
+                        {% endif %}
+                        
+                        {% if customer.phone %}
+                        <dt>Телефон</dt>
+                        <dd>{{ customer.phone }}</dd>
+                        {% endif %}
+                        
+                        {% if customer.address %}
+                        <dt>Адрес</dt>
+                        <dd>{{ customer.address }}</dd>
+                        {% endif %}
+                        
+                        <dt>Всего заказов</dt>
+                        <dd><strong>{{ customer.total_orders }}</strong></dd>
+                        
+                        <dt>Всего потрачено</dt>
+                        <dd><strong>{{ customer.total_spent|floatformat:2 }} ₽</strong></dd>
+                        
+                        <dt>Средний чек</dt>
+                        <dd><strong>{{ customer.get_average_order_value|floatformat:2 }} ₽</strong></dd>
+                        
+                        {% if customer.notes %}
+                        <dt>Заметки</dt>
+                        <dd>{{ customer.notes }}</dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">История заказов</h5>
+                    <a href="{% url 'order_create' %}?customer={{ customer.pk }}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Новый заказ
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    {% if orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Сумма</th>
+                                    <th>Статус</th>
+                                    <th>Оплата</th>
+                                    <th>Дата</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td><a href="{% url 'order_detail' order.pk %}" class="text-decoration-none">#{{ order.pk }}</a></td>
+                                    <td>{{ order.total_amount|floatformat:2 }} ₽</td>
+                                    <td>
+                                        <span class="badge bg-{% if order.status == 'completed' %}success{% elif order.status == 'pending' %}warning{% elif order.status == 'cancelled' %}danger{% else %}info{% endif %}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{% if order.payment_status == 'paid' %}success{% elif order.payment_status == 'partial' %}warning{% else %}danger{% endif %}">
+                                            {{ order.get_payment_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                                    <td>
+                                        <a href="{% url 'order_detail' order.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-cart-x fs-1"></i>
+                        <p class="mt-2">Нет заказов</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,269 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}Аналитика - CRM{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-0">Аналитика по заказам и товарам</h4>
+            <p class="text-muted mb-0">Ключевые показатели и разбивки</p>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">Всего заказов</div>
+                    <div class="fs-4 fw-semibold">{{ total_orders }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">Завершено</div>
+                    <div class="fs-4 fw-semibold">{{ completed_orders }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">Оплачено</div>
+                    <div class="fs-4 fw-semibold">{{ paid_orders }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">Отменено</div>
+                    <div class="fs-4 fw-semibold">{{ cancelled_orders }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">Выручка (всего)</div>
+                    <div class="fs-4 fw-semibold">{{ revenue_total }} ₽</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">Выручка (месяц)</div>
+                    <div class="fs-4 fw-semibold">{{ revenue_month }} ₽</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">Выручка (сегодня)</div>
+                    <div class="fs-4 fw-semibold">{{ revenue_today }} ₽</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Заказы по статусам</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Статус</th>
+                                <th>Кол-во</th>
+                                <th>Сумма</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in orders_by_status %}
+                            <tr>
+                                <td>{{ row.status }}</td>
+                                <td>{{ row.count }}</td>
+                                <td>{{ row.total|default_if_none:"0" }} ₽</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="text-center text-muted">Нет данных</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Заказы по оплате</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Статус оплаты</th>
+                                <th>Кол-во</th>
+                                <th>Сумма</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in orders_by_payment %}
+                            <tr>
+                                <td>{{ row.payment_status }}</td>
+                                <td>{{ row.count }}</td>
+                                <td>{{ row.total|default_if_none:"0" }} ₽</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="text-center text-muted">Нет данных</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Топ товаров по продажам</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="chart-top-products" height="200"></canvas>
+                </div>
+                <div class="card-body p-0 border-top">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Товар</th>
+                                <th>Продано</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in top_products %}
+                            <tr>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.total_sold }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="2" class="text-center text-muted">Нет данных</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Низкий остаток</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Товар</th>
+                                <th>Остаток</th>
+                                <th>Мин.уровень</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in low_stock %}
+                            <tr>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.stock_quantity }}</td>
+                                <td>{{ product.min_stock_level }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="text-center text-muted">Нет данных</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-0">
+                    <h6 class="mb-0">Последние заказы</h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Клиент</th>
+                                <th>Статус</th>
+                                <th>Оплата</th>
+                                <th>Сумма</th>
+                                <th>Дата</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td><a href="{% url 'order_detail' order.pk %}">#{{ order.pk }}</a></td>
+                                <td>{{ order.get_customer_display_name }}</td>
+                                <td>{{ order.status }}</td>
+                                <td>{{ order.payment_status }}</td>
+                                <td>{{ order.total_amount }} ₽</td>
+                                <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="6" class="text-center text-muted">Нет данных</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const productLabels = [{% for product in top_products %}"{{ product.name|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
+    const productCounts = [{% for product in top_products %}{{ product.total_sold|default:0 }}{% if not forloop.last %}, {% endif %}{% endfor %}];
+
+    const palette = [
+        '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f',
+        '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab'
+    ];
+
+    const ctxTop = document.getElementById('chart-top-products');
+    if (ctxTop && productLabels.length) {
+        new Chart(ctxTop, {
+            type: 'doughnut',
+            data: {
+                labels: productLabels,
+                datasets: [{
+                    data: productCounts,
+                    backgroundColor: palette,
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

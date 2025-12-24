@@ -1,0 +1,80 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}{{ title|default:"Товар" }} - CRM{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h4 class="mb-0">{{ title|default:"Товар" }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label class="form-label">Название товара *</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <div class="text-danger small">{{ form.name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Описание</label>
+                                {{ form.description }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Категория</label>
+                                {{ form.category }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Поставщик</label>
+                                {{ form.supplier }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Закупочная цена</label>
+                                {{ form.purchase_price }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Цена продажи</label>
+                                {{ form.selling_price }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Количество на складе</label>
+                                {{ form.stock_quantity }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Минимальный остаток</label>
+                                {{ form.min_stock_level }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Артикул</label>
+                                {{ form.sku }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Штрих-код</label>
+                                {{ form.barcode }}
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    {{ form.is_active }}
+                                    <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                        Товар активен
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <a href="{% url 'product_list' %}" class="btn btn-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

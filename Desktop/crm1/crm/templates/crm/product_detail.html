@@ -1,0 +1,122 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}{{ product.name }} - CRM{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">{{ product.name }}</h1>
+        <div>
+            <a href="{% url 'product_edit' product.pk %}" class="btn btn-primary">
+                <i class="bi bi-pencil me-2"></i>Редактировать
+            </a>
+            <a href="{% url 'product_list' %}" class="btn btn-secondary">Назад</a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">Информация о товаре</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Название</dt>
+                        <dd class="col-sm-8">{{ product.name }}</dd>
+                        
+                        <dt class="col-sm-4">Описание</dt>
+                        <dd class="col-sm-8">{{ product.description|default:"—" }}</dd>
+                        
+                        <dt class="col-sm-4">Категория</dt>
+                        <dd class="col-sm-8">{{ product.category.name|default:"—" }}</dd>
+                        
+                        <dt class="col-sm-4">Поставщик</dt>
+                        <dd class="col-sm-8">
+                            {% if product.supplier %}
+                            <a href="{% url 'supplier_detail' product.supplier.pk %}">{{ product.supplier.name }}</a>
+                            {% else %}
+                            —
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-4">Артикул</dt>
+                        <dd class="col-sm-8"><code>{{ product.sku|default:"—" }}</code></dd>
+                        
+                        <dt class="col-sm-4">Штрих-код</dt>
+                        <dd class="col-sm-8"><code>{{ product.barcode|default:"—" }}</code></dd>
+                        
+                        <dt class="col-sm-4">Закупочная цена</dt>
+                        <dd class="col-sm-8">{{ product.purchase_price|floatformat:2 }} ₽</dd>
+                        
+                        <dt class="col-sm-4">Цена продажи</dt>
+                        <dd class="col-sm-8"><strong>{{ product.selling_price|floatformat:2 }} ₽</strong></dd>
+                        
+                        <dt class="col-sm-4">Маржа</dt>
+                        <dd class="col-sm-8">{{ product.get_profit_margin|floatformat:1 }}%</dd>
+                        
+                        <dt class="col-sm-4">Остаток на складе</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-{% if product.is_low_stock %}danger{% else %}success{% endif %} fs-6">
+                                {{ product.stock_quantity }} шт.
+                            </span>
+                            {% if product.is_low_stock %}
+                            <span class="text-danger ms-2">⚠ Низкий остаток!</span>
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-4">Минимальный остаток</dt>
+                        <dd class="col-sm-8">{{ product.min_stock_level }} шт.</dd>
+                        
+                        <dt class="col-sm-4">Общая стоимость на складе</dt>
+                        <dd class="col-sm-8">{{ product.get_total_value|floatformat:2 }} ₽</dd>
+                        
+                        <dt class="col-sm-4">Статус</dt>
+                        <dd class="col-sm-8">
+                            {% if product.is_active %}
+                            <span class="badge bg-success">Активен</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Неактивен</span>
+                            {% endif %}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0">История продаж</h5>
+                </div>
+                <div class="card-body">
+                    {% if order_items %}
+                    <div class="list-group list-group-flush">
+                        {% for item in order_items %}
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <a href="{% url 'order_detail' item.order.pk %}" class="text-decoration-none">
+                                        Заказ #{{ item.order.pk }}
+                                    </a>
+                                    <br>
+                                    <small class="text-muted">{{ item.order.created_at|date:"d.m.Y" }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <strong>{{ item.quantity }} шт.</strong><br>
+                                    <small class="text-muted">{{ item.price|floatformat:2 }} ₽</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">Нет продаж</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

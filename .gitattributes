@@ -1,0 +1,39 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source files
+*.cs text diff=csharp
+*.csproj text
+*.sln text
+*.json text
+*.xml text
+*.yml text
+*.yaml text
+*.md text
+*.txt text
+*.config text
+
+# Shell scripts
+*.sh text eol=lf
+*.ps1 text eol=crlf
+
+# Docker files
+Dockerfile text eol=lf
+.dockerignore text eol=lf
+docker-compose.yml text eol=lf
+
+# Database
+*.sql text eol=lf
+
+# Exclude from normalization
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.dll binary
+*.exe binary
+*.pdb binary
+

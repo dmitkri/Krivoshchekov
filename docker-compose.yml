@@ -1,0 +1,70 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tripwithfriends-postgres
+    environment:
+      POSTGRES_DB: tripwithfriends
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: tripwithfriends-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  liquibase:
+    image: liquibase/liquibase:latest
+    container_name: tripwithfriends-liquibase
+    volumes:
+      - ./liquibase:/liquibase/changelog
+    command: --defaults-file=/liquibase/changelog/liquibase.properties --changelog-file=/liquibase/changelog/changelog-master.xml update
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://postgres:5432/tripwithfriends
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tripwithfriends-api
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=tripwithfriends;Username=postgres;Password=postgres
+      - ConnectionStrings__Redis=redis:6379
+      - Jwt__Key=YourSuperSecretKeyThatShouldBeAtLeast32CharactersLong!
+      - Jwt__Issuer=Tripwithfriends
+      - Jwt__Audience=Tripwithfriends
+      - Jwt__ExpirationMinutes=60
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
+  redis_data:
+

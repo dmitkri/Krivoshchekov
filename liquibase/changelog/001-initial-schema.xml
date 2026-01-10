@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="001-create-users-table" author="tripwithfriends">
+        <createTable tableName="Users">
+            <column name="Id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="Name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Email" type="VARCHAR(200)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="PasswordHash" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Role" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex indexName="IX_Users_Email" tableName="Users">
+            <column name="Email"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="002-create-trips-table" author="tripwithfriends">
+        <createTable tableName="Trips">
+            <column name="Id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="Name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="StartDate" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EndDate" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="OrganizerId" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IsCompleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="Trips"
+            baseColumnNames="OrganizerId"
+            constraintName="FK_Trips_Users_OrganizerId"
+            referencedTableName="Users"
+            referencedColumnNames="Id"
+            onDelete="RESTRICT"/>
+    </changeSet>
+
+    <changeSet id="003-create-trip-participants-table" author="tripwithfriends">
+        <createTable tableName="TripParticipants">
+            <column name="TripId" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UserId" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="TripParticipants" columnNames="TripId,UserId"/>
+        <addForeignKeyConstraint
+            baseTableName="TripParticipants"
+            baseColumnNames="TripId"
+            constraintName="FK_TripParticipants_Trips_TripId"
+            referencedTableName="Trips"
+            referencedColumnNames="Id"
+            onDelete="CASCADE"/>
+        <addForeignKeyConstraint
+            baseTableName="TripParticipants"
+            baseColumnNames="UserId"
+            constraintName="FK_TripParticipants_Users_UserId"
+            referencedTableName="Users"
+            referencedColumnNames="Id"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="004-create-expenses-table" author="tripwithfriends">
+        <createTable tableName="Expenses">
+            <column name="Id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="Name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Amount" type="DECIMAL(18,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Category" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PayerId" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TripId" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+            baseTableName="Expenses"
+            baseColumnNames="PayerId"
+            constraintName="FK_Expenses_Users_PayerId"
+            referencedTableName="Users"
+            referencedColumnNames="Id"
+            onDelete="RESTRICT"/>
+        <addForeignKeyConstraint
+            baseTableName="Expenses"
+            baseColumnNames="TripId"
+            constraintName="FK_Expenses_Trips_TripId"
+            referencedTableName="Trips"
+            referencedColumnNames="Id"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="005-create-expense-participants-table" author="tripwithfriends">
+        <createTable tableName="ExpenseParticipants">
+            <column name="ExpenseId" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UserId" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="ExpenseParticipants" columnNames="ExpenseId,UserId"/>
+        <addForeignKeyConstraint
+            baseTableName="ExpenseParticipants"
+            baseColumnNames="ExpenseId"
+            constraintName="FK_ExpenseParticipants_Expenses_ExpenseId"
+            referencedTableName="Expenses"
+            referencedColumnNames="Id"
+            onDelete="CASCADE"/>
+        <addForeignKeyConstraint
+            baseTableName="ExpenseParticipants"
+            baseColumnNames="UserId"
+            constraintName="FK_ExpenseParticipants_Users_UserId"
+            referencedTableName="Users"
+            referencedColumnNames="Id"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+
+</databaseChangeLog>
+
+
